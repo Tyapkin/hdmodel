@@ -1,0 +1,11 @@
+﻿users:
+    title: Users
+    fields:
+        - {id: name, title: Name, type: char}
+        - {id: paycheck, title: Sallary, type: int}
+        - {id: date_joined, title: Date of joined, type: date}
+rooms:
+    title: Rooms
+    fields:
+        - {id: department, title: Department, type: char}
+        - {id: spots, title: Spots, type: int}
