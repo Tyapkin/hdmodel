@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>Hyperdrive | Main page</title>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/main.css">
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-2.1.0.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/myjs.js"></script>
+</head>
+<body>
+    <div class="g">
+        <div class="g-row">
+            <div class="g-4">
+            {% block sidebar %}{% endblock %}
+            </div>
+            <div class="g-8">
+                <section id="contentPane"><!-- Content --></section>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

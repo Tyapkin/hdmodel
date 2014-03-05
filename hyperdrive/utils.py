@@ -52,15 +52,3 @@ def get_model_from_config(config_file = CONFIG_FILE):
 			}
 
 		yield result
-
-
-def install(model):
-	from django.core.management import sql, color
-	from django.db import connection
-
-	style = color.no_style()
-	cursor = connection.cursor()
-	statements, pending = sql.sql_create(model, style, cursor.db)
-
-	for sql in statements:
-		cursor.execute(sql)

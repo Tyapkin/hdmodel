@@ -11,7 +11,7 @@ class BaseModel(object):
 
         for yaml_model in self.obj:
             fields = {
-                '__unicode__': lambda self: '#%d - %s' % (self.id, yaml_model['name']['fields'][0]['id']),
+                '__unicode__': lambda self: '#%d - %s' % (self.id, yaml_model['verbose_name']),
             }
 
             f = [(k, v) for k, v in yaml_model['fields'].items()]
@@ -23,11 +23,13 @@ class BaseModel(object):
             }
             admin_opts = {}
 
-            return self.create_model(yaml_model['verbose_name'], fields,
+            model = self.create_model(yaml_model['verbose_name'], fields,
                 meta_opts = meta_opts,
                 admin_opts = admin_opts,
                 app_label = 'hyperdrive',
                 module = self.__module__,)
+
+            return model
 
 
     def create_model(self, name, fields=None, app_label='', module='', meta_opts=None, admin_opts=None):
@@ -68,7 +70,14 @@ class BaseModel(object):
 
 
 class HDModel(models.Model):
-    models = BaseModel()
-    models.finalize()
-    models = BaseModel()
-    models.finalize()
+    model_dict = {}
+    obj = get_model_from_config()
+    
+    for rec in obj:
+        models = BaseModel()
+        model = models.finalize()
+        model_dict[model._meta.verbose_name] = model
+
+
+    class Meta:
+        abstract = True
