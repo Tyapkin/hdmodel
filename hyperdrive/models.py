@@ -33,31 +33,31 @@ class BaseModel(object):
 
 
     def create_model(self, name, fields=None, app_label='', module='', meta_opts=None, admin_opts=None):
-        """Create specified model"""
+        '''Создание указанной модели'''
         class Meta:
-            # Using type('Meta', ...) gives a dictproxy error during model creation
+            # Использование type('Мета', ...) вызовет dictproxy ошибку во время создания модели
             pass
 
         if app_label:
-            # app_label must be set using the Meta inner class
+            # app_label должна быть установлена с помощью внутреннего класса Meta
             setattr(Meta, 'app_label', app_label)
 
-        # Update Meta with any options that were provided
+        # Обновление класса Meta со всеми предоставленными опциями
         if meta_opts is not None:
             for key, value in meta_opts.items():
                 setattr(Meta, key, value)
 
-        # Set up a dictionary to simulate declarations within a class
+        # Определяем словарь для имитации описаний в классе
         attrs = {'__module__': module, 'Meta': Meta}
 
-        # Add in any fields that were provided
+        # Добавляем все поля в атрибуты, которые были предоставленны
         if fields:
             attrs.update(fields)
 
-        # Create the class, which automatically triggers ModelBase processing
+        # Создать класс, который автоматически запускает обработку ModelBase
         model = type(name, (models.Model,), attrs)
 
-        # Create an Admin class if admin options were provided
+        # Создание класса администратора системы, если были предоставлены опции
         if admin_opts is not None:
             from django.contrib import admin
             class Admin(admin.ModelAdmin):
