@@ -3,13 +3,12 @@ from django.db.models import get_model
 from django.forms import ModelForm
 from django.forms.models import modelform_factory
 from django.shortcuts import render
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponseRedirect
 import json
 
 
 def hyper_form(request, model_name):
-    model_name = model_name.capitalize()
-    model = get_model('hyperdrive', model_name)
+    model = get_model('hyperdrive', model_name.capitalize())
 
     if not model:
         raise Http404
@@ -29,8 +28,10 @@ def hyper_form(request, model_name):
         form = Form(request.POST)
         if form.is_valid():
             form.save()
-            print('Success data save!')
+            return HttpResponseRedirect('../../thanks/')
     else:
         form = Form()
 
-    return render(request, 'form.html', {'form': form,})
+    return render(request, 'form.html', {'form': form, 'model': model_name,})
+
+# Сделать форму информативней...

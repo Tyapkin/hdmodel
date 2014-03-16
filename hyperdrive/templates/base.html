@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+{% load staticfiles %}
 <html lang="ru">
 <head>
     <meta charset="utf-8" />
     <title>Hyperdrive | Main page</title>
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/main.css">
-    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-2.1.0.min.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/myjs.js"></script>
+    <link rel="stylesheet" href="{% static "css/main.css" %}">
+    <script type="text/javascript" src="{% static "js/jquery-2.1.0.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/myjs.js" %}"></script>
 </head>
 <body>
     <div class="g">
@@ -15,7 +16,8 @@
             </div>
             <div class="g-8">
                 <section id="contentPane"><!-- Content --></section>
-                {% block form %}{% endblock %}
+                <section id="formPane"><!-- Form --></section>
+                {% block information %}{% endblock %}
             </div>
         </div>
     </div>

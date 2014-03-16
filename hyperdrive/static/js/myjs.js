@@ -1,5 +1,6 @@
 $(function() {
-    $('ul.f-nav-tabs a').click(function() {
+    $('ul.f-nav-tabs a').bind('click', function(event) {
+        event.preventDefault(); // Чтобы браузер по ссылке не ходил
         var url = $(this).attr('href');
         $.getJSON(url, function(data) {
             $('table#items').remove();
@@ -14,7 +15,7 @@ $(function() {
 
             $.each(data.qsd, function(key, value) {
                 var tmp_val = value;
-                var tr = '<tr id="vals">';
+                var tr = '<tr>';
                 $.each(tmp_val, function(key, value) {
                     tr += '<td>' + value + '</td>';
                 });
@@ -23,6 +24,6 @@ $(function() {
             });
             $('section#contentPane').html(html_table);
         });
-        return false;
+        $('section#formPane').load('/hd/' + url + '/add/');
     });
 });

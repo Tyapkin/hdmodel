@@ -1,13 +1,11 @@
 {% extends "base.html" %}
 
-                {% block sidebar %}
-                <nav>
-                    <ul class="f-nav-list f-nav-tabs">
-                    {% for model_name in models.values %}
-                        <li>
-                            <a href="{{ model_name|lower }}">{{ model_name }}</a>
-                        </li>
-                    {% endfor %}
-                    </ul>
-                </nav>
-                {% endblock %}
+{% block sidebar %}
+<nav>
+    <ul class="f-nav-list f-nav-tabs">
+    {% for model_name in models.values %}
+        <li><a href="{{ model_name|lower }}">{{ model_name }}</a></li>
+    {% endfor %}
+    </ul>
+</nav>
+{% endblock %}

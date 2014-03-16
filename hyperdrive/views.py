@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.shortcuts import render, render_to_response
+from django.shortcuts import render
 from django.db.models import get_model
 from django.http import HttpResponse, Http404
 import datetime
@@ -67,3 +67,7 @@ def hyper_data(request, model_name):
             content_type = 'application/json')
     else:
         raise Http404
+
+
+def thanks(request):
+    return render(request, 'success.html')
