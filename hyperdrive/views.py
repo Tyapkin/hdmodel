@@ -71,3 +71,7 @@ def hyper_data(request, model_name):
 
 def thanks(request):
     return render(request, 'success.html')
+
+
+def tt(request):
+    return HttpResponse(request.POST)

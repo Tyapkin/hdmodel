@@ -7,6 +7,8 @@ urlpatterns = patterns('',
 
     url(r'^thanks/$', 'hyperdrive.views.thanks', name = 'thanks'),
 
+    url(r'^test_url/$', 'hyperdrive.views.tt', name = 'tt'),
+
     url(r'^(?P<model_name>[\w]+)/$', 'hyperdrive.views.hyper_data', name = 'hyper_data'),
 
     url(r'^(?P<model_name>[\w]+)/add/$', 'hyperdrive.hdforms.hyper_form', name = 'hyper_form'),

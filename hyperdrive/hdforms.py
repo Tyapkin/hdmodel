@@ -33,5 +33,3 @@ def hyper_form(request, model_name):
         form = Form()
 
     return render(request, 'form.html', {'form': form, 'model': model_name,})
-
-# Сделать форму информативней...
