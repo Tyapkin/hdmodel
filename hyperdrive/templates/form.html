@@ -1,6 +1,7 @@
 <form action="/hd/{{ model }}/add/" id="hdform" method="post">
+    {% csrf_token %}
     <fieldset>
-        <legend>New Data</legend>
+        <legend>New data in: {{ model }}</legend>
         {{ form.as_p }}
         <input type="submit" value="Add" />
     </fieldset>

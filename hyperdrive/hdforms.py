@@ -4,7 +4,7 @@ from django.forms import ModelForm
 from django.forms.models import modelform_factory
 from django.shortcuts import render
 from django.http import Http404, HttpResponseRedirect
-import json
+from django import forms
 
 
 def hyper_form(request, model_name):
@@ -25,10 +25,10 @@ def hyper_form(request, model_name):
     )
 
     if request.method == 'POST':
-        form = Form(request.POST)
+        form = Form(request.POST or None)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect('../../thanks/')
+            return HttpResponseRedirect('/hd/')
     else:
         form = Form()
 

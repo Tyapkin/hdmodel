@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-from django.db import models
+from django.db.models import Model, AutoField, IntegerField, DateField, CharField
 from hyperdrive.utils import get_model_from_config
+
+FIELDS_TYPE = {'auto': AutoField, 'char': CharField, 'date': DateField, 'int': IntegerField}
+JSON_FIELDS_TYPE = dict((v, k) for k, v in FIELDS_TYPE.items())
 
 
 class BaseModel(object):
     obj = get_model_from_config()
-
 
     def finalize(self):
 
@@ -31,7 +33,6 @@ class BaseModel(object):
 
             return model
 
-
     def create_model(self, name, fields=None, app_label='', module='', meta_opts=None, admin_opts=None):
         '''Создание указанной модели'''
         class Meta:
@@ -55,7 +56,7 @@ class BaseModel(object):
             attrs.update(fields)
 
         # Создать класс, который автоматически запускает обработку ModelBase
-        model = type(name, (models.Model,), attrs)
+        model = type(name, (Model,), attrs)
 
         # Создание класса администратора системы, если были предоставлены опции
         if admin_opts is not None:
@@ -69,7 +70,7 @@ class BaseModel(object):
         return model
 
 
-class HDModel(models.Model):
+class HDModel(Model):
     model_dict = {}
     obj = get_model_from_config()
     

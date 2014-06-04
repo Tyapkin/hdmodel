@@ -5,6 +5,8 @@ $(function() {
 
         CLASS_TABLE.create_dynamic_table(url);
     });
+    $('.datepicker').datepicker();
+    $.datepicker.setDefaults({ dateFormat: 'yy-mm-dd' });
 });
 
 var CLASS_TABLE = {};
@@ -13,88 +15,96 @@ CLASS_TABLE.create_dynamic_table = function(url_load) {
     var url_for_json = url_load;
 
     $.getJSON(url_for_json, function(data) {
-        $(html_table).remove();
-
-        var dynamic_form = $('<form>', {
-            'id': 'great_form',
-            'method': 'post',
-            'action': '/hd/test_url/'
-        });
         var html_table = $('<table>', {
-            'id':'editable',
-            'class':'data-items'
+            'id':'hdtable'
         });
         var thead = $('<thead>');
         var trh = $('<tr>');
 
-        $.each(data.fields, function(key, value) {
+        $.each(data.fields_name, function(key, value) {
             var th = $('<th>').append(value);
             $(trh).append(th);
         });
         $(html_table).append($(thead).append(trh));
 
-        $.each(data.qsd, function(key, value) {
+        $.each(data.items, function(i, val) {
             var tr = $('<tr>');
-            var tmp_val = value;
-
-            $.each(tmp_val, function(key, value) {
-                var td = $('<td>').append(value);
+            $.each(data.items[i], function(j, val) {
+                var field_data = data.items[i][j];
+                var td = $('<td>', {
+                    'class': 'editable',
+                    'field_type': field_data.type,
+                    'field_name': field_data.name,
+                    'model': data.model
+                }).append(field_data.value);
                 $(tr).append(td);
             });
             $(html_table).append(tr);
         });
-        $('section#contentPane').html($(dynamic_form).append(html_table));
-        CLASS_TABLE.add_edit_button_to_row(html_table);
+
+        $('section#contentPane').html(html_table);
         $('section#formPane').load('/hd/' + url_load + '/add/');
+        $('td.editable').on('click', CLASS_TABLE.inline_edit);
     });
 }
 
-CLASS_TABLE.add_edit_button_to_row = function(table) {
-    var tables = $(table)
-
-    tables.each(function() {
-        var _table = $(this);
-        _table.find('thead tr').append(
-            $('<th class="edit">&nbsp;</th>')
-        );
-        _table.find('tbody tr').append(
-            $('<td class="edit"><input type="button" value="Edit" /></td>')
-        );
+CLASS_TABLE.inline_edit = function() {
+    var type = $(this).attr('field_type');
+    var input = $('<input>', {
+        'id': 'input',
+        'name': 'value',
+        'value': $(this).text()
     });
 
-    tables.find('.edit :button').on('click', function(e) {
-        CLASS_TABLE.edit_table_row(this);
-        e.preventDefault();
-    });
-}
+    if (type != 'auto') {
+        if (type == 'date') {
+            input.prop({'class': 'datepicker', 'readonly': true});
+        }
+        $(this).empty().unbind('click').append(input);
 
-CLASS_TABLE.edit_table_row = function(button) {
-    var button = $(button);
-    var row = button.parents('tbody tr');
-    var cells = row.children('td').not('.edit');
-
-    if (row.data('flag')) { // режим редактирования, переход в режим таблиці
-        // cell methods
-        cells.each(function() {
-            var _cell = $(this);
-            _cell.html(_cell.find('input').val())
-        });
-
-        row.data('flag', false);
-        button.val('Edit');
+        if (type == 'date') {
+            $('#input').datepicker({dateFormat: 'yy-mm-dd'}).change(CLASS_TABLE.inline_submit).focus();
+        }
+        else {
+            $('#input').focus().blur(CLASS_TABLE.inline_submit).keyup(CLASS_TABLE.enter_detector);
+        }
     }
-    else { // режим таблицы, переход в режим редактирования
-        // cell methods
-        cells.each(function() {
-            var _cell = $(this);
-            _cell.data('text', _cell.html()).html('');
+}
 
-            var input = $('<input type="text" />').val(_cell.data('text')).width(_cell.width() - 16);
+CLASS_TABLE.enter_detector = function(e) {
 
-            _cell.append(input);
+    if (e.which == 13) {
+        $(this).blur();
+    }
+    return false;
+}
+
+CLASS_TABLE.inline_submit = function() {
+    var model = $(this).parent().attr('model');
+    var obj_id = $(this).closest('tr').find('td[field_name=id]').text();
+    var td = $(this).closest('.editable');
+    var field_name = td.attr('field_name');
+    var value = $(this).val();
+    var field_type = td.attr('field_type');
+
+    if (field_type == 'int' && !$.isNumeric(value)) {
+        td.empty().text($(this).attr('init_data')).click(CLASS_TABLE.inline_edit);
+        alert('Only integer values allowed for this field, you entered: ' + value);
+    }
+    else {
+        $.ajax({
+            type: 'POST',
+            url: '/hd/edit/',
+            data: {
+                'model': model,
+                'obj_id': obj_id,
+                'field_name': field_name,
+                'value': value,
+                'csrfmiddlewaretoken': $.cookie('csrftoken')
+            },
+            success: function(data) {
+                td.empty().text(value).click(CLASS_TABLE.inline_edit);
+            }
         });
-
-        row.data('flag', true);
-        button.val('Save');
     }
 }

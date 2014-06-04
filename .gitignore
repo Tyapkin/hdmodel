@@ -1,5 +1,6 @@
 *.sqlite3
 *.pyc
+.idea
 LICENSE
 staticfiles
 __pycache__

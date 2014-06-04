@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
-from django.db.models import get_model
+from django.db.models import get_model, CharField, IntegerField, DateField
 from django.http import HttpResponse, Http404
+from django import forms
 import datetime
 import json
 
-from hyperdrive.models import HDModel
+from hyperdrive.models import HDModel, JSON_FIELDS_TYPE
+
+VALIDATION_FORM_FIELD = {IntegerField: forms.IntegerField, CharField: forms.CharField, DateField: forms.DateField,}
 
 
 def hyper_tabs(request):
@@ -32,46 +35,60 @@ def hyper_data(request, model_name):
     '''
     Здесь динамически получаем данные, и с помощью jQuery обрабатываем данные
     и помещаем их в таблицу. Никаких кусков html-кода!
+
+    Получаем название модели из адрессной строки и делаем капитализацию.
+    Затем получаем модель с помощью метода get_model.
     '''
+    if request.is_ajax() and request.method == 'GET':
+        model_name = model_name.capitalize()
+        model = get_model('hyperdrive', model_name)
 
-    # Получаем название модели и адрессной строки и делаем капитализацию.
-    # Потом получаем модель с помощью метода get_model.
-    model_name = model_name.capitalize()
-    model = get_model('hyperdrive', model_name)
+        if not model:
+            raise Http404
 
-    if not model:
-        raise Http404
+        # Получаем поля модели
+        fields = model._meta.fields
 
-    # Получаем название полей в модели
-    fields = [f.name for f in model._meta.fields]
+        # Создаем список с человекопонятными названиями полей
+        fields_name = [f.verbose_name for f in fields]
 
-    # Получаем кортеж со значениями указанными в values_list
-    qsd = model.objects.all().values_list(*fields)
+        items = []
 
-    # Чтобы не было ошибок с датой при json.dumps(obj)
-    date_handler = lambda qsd: (
-        qsd.isoformat()
-        if isinstance(qsd, datetime.datetime)
-        or isinstance(qsd, datetime.date)
-        else None
-    )
+        for item in model.objects.all():
+            items.append([{'name': f.name, 'type': JSON_FIELDS_TYPE[f.__class__], 'value': getattr(item, f.name)} for f in fields])
 
-    # Теперь получаем человеческие названи полей модели
-    fields = [f.verbose_name for f in model._meta.fields]
+        # Чтобы не было ошибок с датой при json.dumps(obj)
+        date_handler = lambda items: (
+            items.isoformat()
+            if isinstance(items, datetime.datetime)
+            or isinstance(items, datetime.date)
+            else None
+        )
 
-    result = {'fields': fields, 'qsd': list(qsd),}
-
-    if request.is_ajax():
-        return HttpResponse(
-            json.dumps(result, default = date_handler),
+        return HttpResponse(json.dumps({'fields_name': fields_name,
+                                        'items': items,
+                                        'model': model.__name__
+                                        },
+                                       default = date_handler),
             content_type = 'application/json')
     else:
         raise Http404
 
 
-def thanks(request):
-    return render(request, 'success.html')
+class ValidatorDataFromForm(forms.Form):
+    def __init__(self, model_field_class, *args, **kwargs):
+        super(ValidatorDataFromForm, self).__init__(*args, **kwargs)
+        self.fields['field'] = VALIDATION_FORM_FIELD[model_field_class]()
 
 
-def tt(request):
-    return HttpResponse(request.POST)
+def edit_data(request):
+    result = False
+    data = {}
+
+    if request.is_ajax() and request.method == 'POST':
+        model = get_model(__name__.split('.')[0], request.POST['model'])
+        object_id = int(request.POST['obj_id'])
+        data[request.POST['field_name']] = request.POST['value']
+        result = model.objects.filter(pk=object_id).update(**data)
+
+    return HttpResponse(json.dumps(result), content_type='application/json')

@@ -5,9 +5,7 @@ from django.conf.urls import patterns, url
 urlpatterns = patterns('',
     url(r'^$', 'hyperdrive.views.hyper_tabs', name = 'hyper_tabs'),
 
-    url(r'^thanks/$', 'hyperdrive.views.thanks', name = 'thanks'),
-
-    url(r'^test_url/$', 'hyperdrive.views.tt', name = 'tt'),
+    url(r'^edit/$', 'hyperdrive.views.edit_data', name = 'edit'),
 
     url(r'^(?P<model_name>[\w]+)/$', 'hyperdrive.views.hyper_data', name = 'hyper_data'),
 
