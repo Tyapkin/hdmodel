@@ -7,6 +7,7 @@ $(function() {
     });
     $('.datepicker').datepicker();
     $.datepicker.setDefaults({ dateFormat: 'yy-mm-dd' });
+    $('ul.f-nav-tabs a').click();
 });
 
 var CLASS_TABLE = {};
@@ -88,7 +89,6 @@ CLASS_TABLE.inline_submit = function() {
     var field_type = td.attr('field_type');
 
     if (field_type == 'int' && !$.isNumeric(value)) {
-        td.empty().text($(this).attr('init_data')).click(CLASS_TABLE.inline_edit);
         alert('Only integer values allowed for this field, you entered: ' + value);
     }
     else {
@@ -102,7 +102,8 @@ CLASS_TABLE.inline_submit = function() {
                 'value': value,
                 'csrfmiddlewaretoken': $.cookie('csrftoken')
             },
-            success: function(data) {
+            success: function() {alert('data has been successfully edited')},
+            complete: function(data) {
                 td.empty().text(value).click(CLASS_TABLE.inline_edit);
             }
         });

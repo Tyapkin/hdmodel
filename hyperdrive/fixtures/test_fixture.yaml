@@ -1,0 +1,14 @@
+- fields: {date_joined: 1954-02-15, name: "\u041C\u044D\u0442\u0442 \u0413\u0440\u0435\
+      \u0439\u043D\u0438\u043D\u0433", paycheck: 2500}
+  model: hyperdrive.users
+  pk: 1
+- fields: {date_joined: 1908-03-03, name: "\u041C\u043E\u043D\u0442\u0438 \u0411\u0451\
+      \u0440\u043D\u0441", paycheck: 1000000}
+  model: hyperdrive.users
+  pk: 2
+- fields: {date_joined: 1989-01-17, name: Homer J. Simpson, paycheck: 1000}
+  model: hyperdrive.users
+  pk: 3
+- fields: {department: "\u041E\u0444\u0438\u0441", spots: 25}
+  model: hyperdrive.rooms
+  pk: 1

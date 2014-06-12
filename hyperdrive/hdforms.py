@@ -5,10 +5,11 @@ from django.forms.models import modelform_factory
 from django.shortcuts import render
 from django.http import Http404, HttpResponseRedirect
 from django import forms
+from django.core.urlresolvers import reverse
 
 
 def hyper_form(request, model_name):
-    model = get_model('hyperdrive', model_name.capitalize())
+    model = get_model(__name__.split('.')[0], model_name.capitalize())
 
     if not model:
         raise Http404
@@ -28,7 +29,7 @@ def hyper_form(request, model_name):
         form = Form(request.POST or None)
         if form.is_valid():
             form.save()
-            return HttpResponseRedirect('/hd/')
+            return HttpResponseRedirect(reverse('hyper_tabs'))
     else:
         form = Form()
 
