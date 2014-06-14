@@ -12,3 +12,6 @@
 - fields: {department: "\u041E\u0444\u0438\u0441", spots: 25}
   model: hyperdrive.rooms
   pk: 1
+- fields: {b_title: "SomeBooka", author: "Crazy Author", isbn: 98577768585, number_of_pages: 333}
+  model: hyperdrive.books
+  pk: 1

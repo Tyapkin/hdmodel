@@ -9,3 +9,10 @@ rooms:
     fields:
         - {id: department, title: Department, type: char}
         - {id: spots, title: Spots, type: int}
+books:
+    title: Books
+    fields:
+        - {id: b_title, title: Book title, type: char}
+        - {id: author, title: Author, type: char}
+        - {id: isbn, title: ISBN, type: int}
+        - {id: number_of_pages, title: Number of pages, type: int}
